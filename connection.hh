@@ -21,6 +21,7 @@
 #include <QXmppClient.h>
 #include <QXmppVCardIq.h>
 #include <QXmppMessage.h>
+#include <QXmppTransferManager.h>
 
 #include "uniquehandlemap.hh"
 
@@ -52,7 +53,7 @@ private:
     void unsubscribe(const Tp::UIntList &handles, Tp::DBusError *error);
     void unpublish(const Tp::UIntList &handles, Tp::DBusError *error);
     void saslStartMechanismWithData(const QString &mechanism, const QByteArray &data, Tp::DBusError *error);
-    Tp::BaseChannelPtr createChannel(const QVariantMap &request, Tp::DBusError *error);
+    Tp::BaseChannelPtr createChannelCB(const QVariantMap &request, Tp::DBusError *error);
     void requestAvatars(const Tp::UIntList &handles, Tp::DBusError *error);
     Tp::AvatarTokenMap getKnownAvatarTokens(const Tp::UIntList &contacts, Tp::DBusError *error);
     void clearAvatar(Tp::DBusError *error);
@@ -67,6 +68,7 @@ private slots:
     void onDisconnected();
     void onError(QXmppClient::Error error);
     void onMessageReceived(const QXmppMessage &message);
+    void onFileReceived(QXmppTransferJob *job);
     void onPresenceReceived(const QXmppPresence &presence);
 //     void onIqReceived(const QXmppIq &iq);
 //     void onStateChanged(QXmppClient::State state);
