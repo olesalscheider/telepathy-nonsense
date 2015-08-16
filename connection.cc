@@ -25,7 +25,7 @@
 #include "common.hh"
 #include "telepathy-nonsense-config.h"
 
-#define DEBUG_STANZAS 0
+#define DEBUG_STANZAS 1
 
 Connection::Connection(const QDBusConnection &dbusConnection, const QString &cmName, const QString &protocolName, const QVariantMap &parameters) :
     Tp::BaseConnection(dbusConnection, cmName, protocolName, parameters), m_client (0)
@@ -33,7 +33,7 @@ Connection::Connection(const QDBusConnection &dbusConnection, const QString &cmN
     DBG;
 
     /* Connection.Interface.Contacts */
-    m_contactsIface = Tp::BaseConnectionContactsInterface::create();
+    m_contactsIface = Tp::BaseConnectionContactsInterface::create(this);
     m_contactsIface->setGetContactAttributesCallback(Tp::memFun(this, &Connection::getContactAttributes));
     m_contactsIface->setContactAttributeInterfaces(QStringList()
                                                    << TP_QT_IFACE_CONNECTION
