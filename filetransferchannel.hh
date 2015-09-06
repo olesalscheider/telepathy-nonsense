@@ -14,6 +14,8 @@
 #ifndef FILETRANSFERCHANNEL_HH
 #define FILETRANSFERCHANNEL_HH
 
+#include "iochannel.hh"
+
 #include <TelepathyQt/BaseChannel>
 
 #include <QXmppTransferManager.h>
@@ -47,7 +49,7 @@ private slots:
 private:
     Connection *m_connection;
     bool m_outgoingTransfer;
-    QBuffer *m_ioDevice;
+    IOChannel *m_ioChannel;
     QXmppTransferFileInfo m_fileInfo;
     QXmppTransferJob *m_transferJob;
 };

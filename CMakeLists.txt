@@ -31,6 +31,7 @@ set(nonsense_SOURCES
     common.cc
     connection.cc
     filetransferchannel.cc
+    iochannel.cc
     protocol.cc
     textchannel.cc
     uniquehandlemap.cc

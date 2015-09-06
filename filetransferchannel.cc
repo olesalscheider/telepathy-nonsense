@@ -28,9 +28,9 @@ FileTransferChannel::FileTransferChannel(Connection *connection, Tp::BaseChannel
     m_fileInfo.setDescription(description);
     m_fileInfo.setSize(size);
 
-    m_ioDevice = new QBuffer;
+    m_ioChannel = new IOChannel(this);
     /* Open the QBuffer - QXmpp requires this */
-    m_ioDevice->open(QIODevice::ReadWrite);
+    m_ioChannel->open(QIODevice::ReadWrite);
 
     setGetIODeviceCallback(Tp::memFun(this, &FileTransferChannel::getIODevice));
     bool success;
@@ -40,7 +40,7 @@ FileTransferChannel::FileTransferChannel(Connection *connection, Tp::BaseChannel
     if (m_outgoingTransfer) {
         QXmppTransferManager *transferManager = m_connection->qxmppClient()->findExtension<QXmppTransferManager>();
         Q_ASSERT(transferManager);
-        m_transferJob = transferManager->sendFile(baseChannel->targetID() + m_connection->lastResourceForJid(baseChannel->targetID(), true), m_ioDevice, m_fileInfo);
+        m_transferJob = transferManager->sendFile(baseChannel->targetID() + m_connection->lastResourceForJid(baseChannel->targetID(), true), m_ioChannel, m_fileInfo);
         Q_ASSERT(m_transferJob->error() == QXmppTransferJob::NoError);
         success = connect(m_transferJob, SIGNAL(stateChanged(QXmppTransferJob::State)), this, SLOT(onQxmppTransferSateChanged(QXmppTransferJob::State)));
         Q_ASSERT(success);
@@ -63,7 +63,7 @@ QIODevice* FileTransferChannel::getIODevice(qulonglong offset, Tp::DBusError* er
         setInitialOffset(0); /* The initial offset is always 0 for QXmpp */
     }
 
-    return m_ioDevice;
+    return m_ioChannel;
 }
 
 void FileTransferChannel::onFileReceived(QXmppTransferJob* job)
@@ -89,7 +89,7 @@ void FileTransferChannel::onStateChanged(uint state, uint reason)
     case Tp::FileTransferStateAccepted:
         if (!m_outgoingTransfer) {
             setInitialOffset(0); /* The initial offset is always 0 for QXmpp */
-            m_transferJob->accept(m_ioDevice);
+            m_transferJob->accept(m_ioChannel);
         }
         break;
     case Tp::FileTransferStateOpen:
